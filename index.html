@@ -184,6 +184,21 @@
   ol.steps { padding-left: 1.3rem; }
   ol.steps li { margin: .35rem 0; }
 
+  .when-actions { display: flex; flex-wrap: wrap; gap: .6rem; justify-content: center; margin-top: 1rem; }
+  .when-actions .btn { margin-top: 0; }
+  .btn.light { background: #fff; color: var(--plum-deep); }
+  .first-time { margin: .25rem 0 0; }
+  .linkish { background: none; border: 0; padding: 0; font: 700 1em var(--sans); color: var(--plum); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+
+  dialog.guide { width: min(40rem, calc(100vw - 1.5rem)); max-height: calc(100dvh - 2rem); padding: 0; overflow: auto; }
+  .guide-top { position: sticky; top: 0; background: var(--pearl); display: flex; align-items: center; justify-content: space-between; padding: 1.1rem 1.4rem .8rem; border-bottom: 1px solid var(--line); z-index: 1; }
+  .guide-top h2 { margin: 0; }
+  .close { background: none; border: 0; font-size: 2rem; line-height: 1; color: var(--plum); cursor: pointer; padding: .2rem .5rem; }
+  .gsec { padding: 1.1rem 1.4rem 0; }
+  .gsec h3 { font-family: var(--serif); font-weight: 400; color: var(--plum-deep); font-size: 1.4rem; margin: .6rem 0 .3rem; }
+  .welcome { background: var(--sky-pale); border-radius: .8rem; padding: .9rem 1rem; margin: 0; }
+  .guide-end { padding: 1.4rem; text-align: center; }
+
   footer { text-align: center; padding: 1rem 0 3rem; color: var(--muted); font-size: .95rem; }
 
   /* ---------- Sign-up dialog ---------- */
@@ -261,12 +276,16 @@
   <div class="when" id="when">
     <p class="big" id="whenBig">Date to be announced</p>
     <p class="small" id="whenSmall">24 hours of prayer on one live Zoom call</p>
-    <a class="btn" id="zoomBtn" href="#" target="_blank" rel="noopener">Join the Zoom call</a>
+    <div class="when-actions">
+      <button type="button" class="btn light guide-open">Prayer guide</button>
+      <a class="btn" id="zoomBtn" href="#" target="_blank" rel="noopener">Join the Zoom call</a>
+    </div>
   </div>
 
   <section id="hours" aria-labelledby="hoursTitle">
     <h2 id="hoursTitle">Choose an hour to pray</h2>
     <p class="muted" id="tzNote">Times are shown in your own time zone.</p>
+    <p class="first-time">New to praying this way? <button type="button" class="linkish guide-open">Open the prayer guide</button> for simple steps and scriptures.</p>
     <div id="setupBanner" class="setup-banner" hidden>
       Sign-ups aren't connected yet. Add the Google Apps Script link in the settings at the bottom of index.html.
     </div>
@@ -277,8 +296,22 @@
     <ol class="hours" id="hourList"></ol>
   </section>
 
-  <section aria-labelledby="guideTitle">
-    <h2 id="guideTitle">What to pray for</h2>
+</main>
+
+<footer>
+  <p>With love and gratitude, Hattie</p>
+</footer>
+
+<dialog id="guideDialog" class="guide" aria-labelledby="guideHead">
+  <div class="guide-top">
+    <h2 id="guideHead">Prayer guide</h2>
+    <button type="button" class="close" id="guideClose" aria-label="Close the prayer guide">×</button>
+  </div>
+  <div class="gsec">
+    <p class="welcome">New to praying this way? You're very welcome here. There are no special words you need to know. Speak to God simply and from your heart, the way you would talk to someone who loves you. You can pray aloud, pray quietly, or simply read a scripture over Naomi. Every prayer counts.</p>
+  </div>
+  <div class="gsec" aria-labelledby="guideTitle">
+    <h3 id="guideTitle">What to pray for</h3>
     <ul class="points">
       <li>The complete and full restoration of Naomi's heart, with strength in every beat</li>
       <li>Strength and peace over her mind and body</li>
@@ -286,10 +319,10 @@
       <li>Wisdom and favor with everyone caring for her</li>
       <li>Strength, unity, and faith for the whole family</li>
     </ul>
-  </section>
+  </div>
 
-  <section aria-labelledby="scriptureTitle">
-    <h2 id="scriptureTitle">Scriptures to pray</h2>
+  <div class="gsec" aria-labelledby="scriptureTitle">
+    <h3 id="scriptureTitle">Scriptures to pray</h3>
     <p class="note">Feel free to use your own scriptures.</p>
     <ul class="scriptures">
       <li><b>Jeremiah 30:17</b><br>“For I will restore health unto thee, and I will heal thee of thy wounds, saith the LORD.”</li>
@@ -299,10 +332,10 @@
       <li><b>Isaiah 41:10</b><br>“Fear thou not; for I am with thee: be not dismayed; for I am thy God: I will strengthen thee.”</li>
       <li><b>James 5:15</b><br>“And the prayer of faith shall save the sick, and the Lord shall raise him up.”</li>
     </ul>
-  </section>
+  </div>
 
-  <section aria-labelledby="howTitle">
-    <h2 id="howTitle">During your hour</h2>
+  <div class="gsec" aria-labelledby="howTitle">
+    <h3 id="howTitle">During your hour</h3>
     <ol class="steps">
       <li>Join the Zoom call a few minutes early, and stay muted unless you're praying aloud.</li>
       <li>Begin with praise and thanksgiving.</li>
@@ -310,13 +343,10 @@
       <li>Pray through the prayer points, naming Naomi's heart specifically.</li>
       <li>If you're leading, invite each person to pray in turn, and stay on until the next hour's leader arrives.</li>
     </ol>
-  </section>
+  </div>
 
-</main>
-
-<footer>
-  <p>With love and gratitude, Hattie</p>
-</footer>
+  <div class="guide-end"><button type="button" class="btn plum" id="guideDone">Close the guide</button></div>
+</dialog>
 
 <dialog id="signupDialog" aria-labelledby="dlgTitle">
   <form id="signupForm" method="dialog" novalidate>
@@ -541,6 +571,10 @@ function toast(msg) {
   clearTimeout(t._h);
   t._h = setTimeout(() => t.classList.remove("show"), 4500);
 }
+
+document.querySelectorAll(".guide-open").forEach(b => b.addEventListener("click", () => $("guideDialog").showModal()));
+["guideClose", "guideDone"].forEach(id => $(id).addEventListener("click", () => $("guideDialog").close()));
+$("guideDialog").addEventListener("click", e => { if (e.target === $("guideDialog")) $("guideDialog").close(); });
 
 setupHeader();
 renderHours();
