@@ -49,20 +49,19 @@
 
   /* ---------- Hero: the portrait in an arched window ---------- */
   .hero { text-align: center; padding: 2.5rem 0 2rem; }
-  .arch {
-    width: min(19rem, 72vw);
+  .frame {
+    width: min(20rem, 78vw);
     margin: 0 auto;
-    padding: .55rem;
+    padding: .6rem;
     background: var(--pearl);
-    border-radius: 999px 999px 1.25rem 1.25rem;
-    box-shadow: 0 0 0 1px var(--gold), 0 18px 40px -22px rgba(59, 21, 48, .55);
+    border-radius: .5rem;
+    box-shadow: 0 0 0 1px var(--gold), 0 18px 40px -24px rgba(59, 21, 48, .45);
   }
-  .arch img {
+  .frame img {
     width: 100%;
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 1 / 1;
     object-fit: cover;
-    object-position: 50% 18%;
-    border-radius: 999px 999px .8rem .8rem;
+    border-radius: .2rem;
   }
   h1 {
     font-family: var(--serif);
@@ -242,7 +241,7 @@
 <main class="wrap">
 
   <header class="hero">
-    <div class="arch"><img src="naomi.jpg" alt="Naomi M. Davis smiling"></div>
+    <div class="frame"><img src="naomi.jpg" alt="Naomi M. Davis smiling"></div>
     <h1>Praying for Naomi</h1>
     <p class="lede">Join family and friends around the world for 24 hours of prayer for the complete and full restoration of Naomi M. Davis's heart.</p>
     <blockquote class="verse">
