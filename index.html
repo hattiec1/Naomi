@@ -139,8 +139,15 @@
   }
   .hour .t { font-family: var(--serif); font-size: 1.3rem; color: var(--plum-deep); line-height: 1.2; }
   .hour .day { display: block; font-family: var(--sans); font-size: .82rem; color: var(--muted); margin-top: .15rem; }
-  .hour .zones { font-size: .88rem; color: var(--muted); }
-  .hour .zones span { margin-right: .9rem; white-space: nowrap; }
+  .hour .zones {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: .35rem .75rem;
+    font-size: .95rem;
+    color: var(--ink);
+  }
+  .hour .zones span { white-space: nowrap; }
+  .hour .zones small { display: block; font-size: .75rem; color: var(--muted); line-height: 1.2; }
   .people { margin: .45rem 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: .4rem; }
   .people li {
     background: var(--pearl);
@@ -230,6 +237,7 @@
 
   @media (max-width: 30rem) {
     .hour { grid-template-columns: 1fr; }
+    .hour .zones { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
   @media (prefers-reduced-motion: reduce) {
     .meter span, .toast { transition: none; }
@@ -355,6 +363,16 @@ const SETTINGS = {
 /* ========================================================= */
 
 const HOURS = 24;
+const ZONES = [
+  ["Ghana", "Africa/Accra"],
+  ["UK", "Europe/London"],
+  ["West Africa (WAT)", "Africa/Lagos"],
+  ["Central Europe", "Europe/Berlin"],
+  ["Kenya", "Africa/Nairobi"],
+  ["US Eastern (Naomi)", "America/Indiana/Indianapolis"],
+  ["US Central", "America/Chicago"],
+  ["US Pacific", "America/Los_Angeles"]
+];
 const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
 const hasDate = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(SETTINGS.START_GHANA_TIME);
 // Ghana is GMT year-round, so the Ghana time is also the UTC time.
@@ -412,9 +430,11 @@ function renderHours() {
     const right = document.createElement("div");
     const zones = document.createElement("div");
     zones.className = "zones";
-    [["Ghana", "Africa/Accra"], ["Naomi", "America/Indiana/Indianapolis"]].forEach(([label, z]) => {
+    ZONES.forEach(([label, z]) => {
       const s = document.createElement("span");
-      s.textContent = label + " " + timeF(z).format(t);
+      const l = document.createElement("small");
+      l.textContent = label;
+      s.append(l, document.createTextNode(timeF(z).format(t)));
       zones.appendChild(s);
     });
     right.appendChild(zones);
