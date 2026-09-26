@@ -396,14 +396,15 @@ const SETTINGS = {
 
 const HOURS = 24;
 const ZONES = [
-  ["Ghana", "Africa/Accra"],
-  ["UK", "Europe/London"],
-  ["West Africa (WAT)", "Africa/Lagos"],
-  ["Central Europe", "Europe/Berlin"],
-  ["Kenya", "Africa/Nairobi"],
-  ["US Eastern (Naomi)", "America/Indiana/Indianapolis"],
-  ["US Central", "America/Chicago"],
-  ["US Pacific", "America/Los_Angeles"]
+  ["GMT (Ghana)", "Africa/Accra"],
+  ["BST (UK)", "Europe/London"],
+  ["WAT (West Africa)", "Africa/Lagos"],
+  ["CEST (Central Europe)", "Europe/Berlin"],
+  ["EAT (Kenya)", "Africa/Nairobi"],
+  ["EDT (Naomi, US Eastern)", "America/Indiana/Indianapolis"],
+  ["EDT (Toronto, Canada)", "America/Toronto"],
+  ["CDT (US Central)", "America/Chicago"],
+  ["PDT (US Pacific)", "America/Los_Angeles"]
 ];
 const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
 const hasDate = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(SETTINGS.START_GHANA_TIME);
@@ -420,21 +421,41 @@ let signups = [];
 let activeHour = null;
 const $ = id => document.getElementById(id);
 
+// Short name for the visitor's time zone (EDT, GMT, WAT, EAT...), shown after the start time.
+const ZONE_ABBR = {
+  "Africa/Accra": "GMT", "Africa/Abidjan": "GMT", "Africa/Dakar": "GMT", "Africa/Monrovia": "GMT", "Africa/Freetown": "GMT",
+  "Africa/Lagos": "WAT", "Africa/Douala": "WAT", "Africa/Kinshasa": "WAT", "Africa/Luanda": "WAT",
+  "Africa/Nairobi": "EAT", "Africa/Addis_Ababa": "EAT", "Africa/Kampala": "EAT", "Africa/Dar_es_Salaam": "EAT",
+  "Africa/Johannesburg": "SAST", "Africa/Harare": "CAT", "Africa/Lusaka": "CAT"
+};
+function zoneAbbr(date) {
+  if (ZONE_ABBR[tz]) return ZONE_ABBR[tz];
+  try {
+    const part = new Intl.DateTimeFormat("en-US", { timeZone: tz || undefined, timeZoneName: "short" })
+      .formatToParts(date).find(p => p.type === "timeZoneName");
+    let name = part ? part.value : "";
+    if (/^GMT[+-]/.test(name)) {
+      const long = new Intl.DateTimeFormat("en-GB", { timeZone: tz || undefined, timeZoneName: "short" })
+        .formatToParts(date).find(p => p.type === "timeZoneName");
+      if (long && !/^GMT[+-]/.test(long.value)) name = long.value;
+    }
+    return name;
+  } catch (e) { return ""; }
+}
+
 function setupHeader() {
   const localTime = timeF(tz).format(start);
   const ghana = timeF("Africa/Accra").format(start);
   const indy = timeF("America/Indiana/Indianapolis").format(start);
   if (hasDate) {
-    $("whenBig").textContent = fmt(tz, { weekday: "long", month: "long", day: "numeric" }).format(start) + " at " + localTime;
-    $("whenSmall").textContent = "Your time. That's " + ghana + " in Ghana and " + indy + " in Indianapolis. We pray together for 24 hours on one live Zoom call.";
+    $("whenBig").textContent = fmt(tz, { weekday: "long", month: "long", day: "numeric" }).format(start) + " at " + localTime + " " + zoneAbbr(start);
+    $("whenSmall").textContent = "We pray together for 24 hours on one live Zoom call.";
   } else {
     $("whenSmall").textContent = "We'll begin at " + ghana + " Ghana time (" + indy + " in Indianapolis) and pray together for 24 hours on one live Zoom call.";
   }
   if (SETTINGS.ZOOM_LINK) { $("zoomBtn").href = SETTINGS.ZOOM_LINK; }
   else { $("zoomBtn").remove(); }
-  $("tzNote").textContent = tz
-    ? "Times are shown in your own time zone (" + tz.replace(/_/g, " ") + "). Many people can pray in the same hour."
-    : "Many people can pray in the same hour.";
+  $("tzNote").textContent = "The large time for each hour is your own local time, wherever you are in the world. Many people can pray in the same hour.";
 }
 
 function renderHours() {
